@@ -1,0 +1,192 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">My Orders</h2>
+    
+    {% if orders %}
+        <div class="row">
+            {% for order in orders %}
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Order #{{ order.id }}</h5>
+                        <p class="card-text"><strong>Status:</strong> {{ order.status }}</p>
+                        <p class="card-text"><strong>Total Price:</strong> ${{ order.total_price }}</p>
+                        <ul class="list-group mb-3">
+                            {% for item in order.order_items %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ item.name }} (x{{ item.quantity }})
+                            </li>
+                            {% endfor %}
+                        </ul>
+                       
+                        <a href="{{ url_for('views.view_order_items', order_id=order.id) }}" class="btn btn-primary">View Order</a>
+                        {% if order.status == 'Pending' %}
+                        <form action="{{ url_for('views.cancel_order', order_id=order.id) }}" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-danger">Cancel Order</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No orders found.</p>
+    {% endif %}
+</div>
+<style>
+/* General Page Styling */
+  /* General Page Styling */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #f3f4f6;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Center Title */
+h2 {
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    color: #222;
+    margin-bottom: 20px;
+}
+
+/* Grid Layout for Orders */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+    padding: 20px;
+}
+
+/* Order Card Styling */
+.card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 380px; /* Increased width */
+    min-height: 280px;
+    text-align: center;
+    position: relative;
+    backdrop-filter: blur(10px);
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Order Title */
+.card-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Order Details */
+.card-text {
+    font-size: 18px;
+    color: #555;
+    margin: 8px 0;
+}
+
+/* Status with Emojis */
+.status {
+    font-size: 20px;
+    font-weight: bold;
+    padding: 8px 0;
+    border-radius: 8px;
+    margin-top: 10px;
+    display: inline-block;
+    width: 100%;
+}
+
+.status.pending {
+    background: #ffeeba;
+    color: #856404;
+}
+
+.status.cancelled {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status.completed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status.pending::before {
+    content: "⏳ ";
+}
+
+.status.cancelled::before {
+    content: "❌ ";
+}
+
+.status.completed::before {
+    content: "✅ ";
+}
+
+/* Price Styling */
+.price {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* Order Items List */
+.list-group {
+    background: #f9f9f9;
+    padding: 12px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.list-group-item {
+    font-size: 16px;
+    color: #333;
+}
+
+/* Buttons */
+.btn-primary, .btn-danger {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px;
+    border-radius: 10px;
+    width: 100%;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.btn-primary {
+    background: #007bff;
+    border: none;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+}
+
+.btn-danger {
+    background: #dc3545;
+    border: none;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #b52b35;
+}
+
+
+</style>
+{% endblock %}

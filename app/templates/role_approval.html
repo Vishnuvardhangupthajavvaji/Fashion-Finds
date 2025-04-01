@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="role_approval_body">
+    <div class="role_approval_container">
+        <h2 class="role-approval-title">Role Approval Requests</h2>
+        <table class="role-approval-table">
+          <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Role</th>
+                <th>Action</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for user in users %}
+              <tr>
+                  <td>{{ user.id }}</td>
+                  <td>{{ user.name }}</td>
+                  <td>{{ user.address }}</td>
+                  <td>{{ user.role }}</td>
+                  <td>
+                      <button class="approve-btn" onclick="approve_user('{{ user.id }}')">Approve</button>
+                      <button class="reject-btn" onclick="reject_user('{{ user.id }}')">Reject</button>
+                  </td>
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+    </div>
+</div>
+
+<style>
+    .role_approval_body {
+        padding: 20px;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .role-approval-title {
+        color: #c4877a;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .role_approval_container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .role-approval-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    
+    .role-approval-table th, 
+    .role-approval-table td {
+        padding: 12px 15px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .role-approval-table tr {
+        text-align: center;
+    }
+    
+    .role-approval-table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .role-approval-table tr:hover {
+        background-color: #f5f5f5;
+    }
+    
+    .approve-btn, .reject-btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .approve-btn {
+        background-color: #c4877a;
+        color: white;
+        margin-right: 8px;
+    }
+    
+    .approve-btn:hover {
+        background-color: #a56b5f;
+    }
+    
+    .reject-btn {
+        background-color: #f8f9fa;
+        color: #333;
+        border: 1px solid #ddd;
+    }
+    
+    .reject-btn:hover {
+        background-color: #e9ecef;
+    }
+</style>
+
+<script>
+    function approve_user(id) {
+        fetch("/admin/approve-user/" + id, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id: id }),
+        })
+        .then((response) => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                console.error("Approval failed");
+            }
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
+    }
+
+    function reject_user(id) {
+        fetch("/admin/reject-user/" + id, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json", 
+            },
+            body: JSON.stringify({ id: id }),
+        })
+        .then((response) => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                console.error("Rejection failed");
+            }
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
+    }
+</script>
+{% endblock %}

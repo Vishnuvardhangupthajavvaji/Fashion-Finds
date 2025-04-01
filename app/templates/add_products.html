@@ -1,0 +1,137 @@
+<!--add_products.html-->
+
+{% extends "base.html" %}
+
+{% block title %} Add Product Page {% endblock %}
+
+{% block content %}
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="{{url_for('static',filename='css/style.css')}}">
+<style>
+    label {
+        color: black;
+    }
+</style>
+<script>
+    function showSingleQuantity() {
+        document.getElementById('singleQuantityField').style.display = 'block';
+        document.getElementById('multipleSizesFields').style.display = 'none';
+    }
+    function showMultipleSizes() {
+        document.getElementById('singleQuantityField').style.display = 'none';
+        document.getElementById('multipleSizesFields').style.display = 'block';
+    }
+
+
+    function addSizeQuantityFields() {
+        let container = document.getElementById("sizeQuantityContainer");
+        let index = container.children.length;
+
+        let div = document.createElement("div");
+        div.className = "size-quantity-group";
+        div.innerHTML = `
+            <div class="size-quantity-group">
+                <label for="sizes-${index}-size">Size</label>
+                <input type="text" name="sizes-${index}-size" class="form-control" placeholder="Enter size" required>
+            </div>
+            <div class="size-quantity-group">
+                <label for="sizes-${index}-quantity">Quantity</label>
+                <input type="number" name="sizes-${index}-quantity" class="form-control" placeholder="Enter quantity" required>
+            </div>
+        `;
+        container.appendChild(div);
+    }
+</script>
+
+<div class="container">
+    <div class="form-container">
+        <h2 class="text-center mb-4">Add New Product</h2>
+        
+        <form action="{{ url_for('admin.add_products') }}" method="post" enctype="multipart/form-data">
+            {{ form.csrf_token }}
+            
+            <div class="mb-3">
+                {{ form.product_name.label(class="form-label") }}
+                {{ form.product_name(class="form-control", placeholder="Enter product name") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.current_price.label(class="form-label") }}
+                {{ form.current_price(class="form-control", placeholder="Enter current price") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.previous_price.label(class="form-label") }}
+                {{ form.previous_price(class="form-control", placeholder="Enter previous price") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.description.label(class="form-label") }}
+                {{ form.description(class="form-control", placeholder="Enter product description") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.category.label(class="form-label") }}
+                {{ form.category(class="form-control", placeholder="Enter category") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.color.label(class="form-label") }}
+                {{ form.color(class="form-control", placeholder="Enter product color") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.discount.label(class="form-label") }}
+                {{ form.discount(class="form-control", placeholder="Enter product discount") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.brand.label(class="form-label") }}
+                {{ form.brand(class="form-control", placeholder="Enter product brand") }}
+            </div>
+
+            <button class="btn-sizes" type="button" onclick="showSingleQuantity()">Single Quantity</button>
+            <button class="btn-sizes" type="button" onclick="showMultipleSizes()">Multiple Sizes</button>
+
+            <div class="mb-3" id="singleQuantityField" style="display: none;">
+
+                {% for size_form in form.sizes %}
+                {{ size_form.single_quantity.label(class="form-label") }}
+                {{ size_form.single_quantity(class="form-control", placeholder="Enter quantity") }}
+                {% endfor %}
+
+            </div>
+
+            <div id="multipleSizesFields" style="display: none;">    
+                <div id="sizeQuantityContainer" class="mb-3">
+                    <label class="form-label">Size & Quantity</label>
+                    {% for size_form in form.sizes %}
+                        <div class="size-quantity-group">
+                            {{ size_form.size.label(class="form-label") }}
+                            {{ size_form.size(class="form-control", placeholder="Enter size") }}
+
+                            {{ size_form.quantity.label(class="form-label") }}
+                            {{ size_form.quantity(class="form-control", placeholder="Enter quantity") }}                           
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="button" class="btn btn-secondary mb-3" onclick="addSizeQuantityFields()">ADD</button>
+            </div>    
+
+            <div class="mb-3">
+                {{ form.product_picture.label(class="form-label") }}
+                <input type="file" class="file-input" id="fileInput" name="product_picture">
+                <small class="text-muted">Upload product image</small>
+            </div>
+            <div class="mb-3 form-check">
+                 {{ form.sale(class="form-check-input", id="saleCheckbox") }}
+                 <label class="form-check-label" for="saleCheckbox">Flash Sale</label>
+             </div>
+
+            <button type="submit" class="btn btn-primary w-100">Add Product</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

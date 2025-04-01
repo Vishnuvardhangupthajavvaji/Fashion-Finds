@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQs | LuxeFashion</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+  
+  <!-- Custom CSS -->
+  <style>
+    :root {
+      --primary: #C4877A;
+      --primary-dark: #A57267;
+      --dark: #262626;
+      --light: #FFFFFF;
+      --gray: #F5F5F5;
+    }
+    
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--gray);
+      color: var(--dark);
+      overflow-x: hidden;
+    }
+    
+    /* Header */
+    .faq-header {
+      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                  url('https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
+      background-size: cover;
+      background-position: center;
+      padding: 100px 0;
+      color: var(--light);
+      text-align: center;
+      margin-bottom: 50px;
+    }
+    
+    .faq-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .faq-header p {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: 0 auto;
+      opacity: 0.9;
+    }
+    
+    /* Search Bar */
+    .search-container {
+        max-width: 600px;
+        margin: -30px auto 50px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .search-input {
+        border-radius: 50px;
+        padding: 15px 120px 15px 25px; /* Right padding for button space */
+        border: none;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        width: 100%;
+        height: 50px;
+        font-size: 1rem;
+        outline: none;
+    }
+
+    .search-btn {
+        position: absolute;
+        right: 5px;
+        top: 0px;
+        bottom: 5px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 0 25px;
+        transition: all 0.3s;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .search-btn i {
+    margin-right: 8px;
+    }
+
+    .search-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    }
+    
+    /* Tabs */
+    .nav-tabs {
+      border: none;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+    
+    .nav-tabs .nav-link {
+      border: none;
+      color: var(--dark);
+      font-weight: 600;
+      padding: 12px 30px;
+      margin: 0 10px;
+      border-radius: 50px;
+      transition: all 0.3s;
+      background: rgba(196, 135, 122, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .nav-tabs .nav-link::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background: var(--primary);
+      transition: all 0.3s;
+    }
+    
+    .nav-tabs .nav-link:hover {
+      background: rgba(196, 135, 122, 0.2);
+    }
+    
+    .nav-tabs .nav-link.active {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .nav-tabs .nav-link.active::before {
+      width: 100%;
+    }
+    
+    /* Accordion */
+    .accordion {
+      --bs-accordion-border-color: none;
+      --bs-accordion-btn-focus-box-shadow: none;
+    }
+    
+    .accordion-item {
+      margin-bottom: 15px;
+      border-radius: 10px !important;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      border: none;
+      transition: all 0.3s;
+    }
+    
+    .accordion-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+    
+    .accordion-button {
+      background-color: var(--light) !important;
+      color: var(--dark) !important;
+      font-weight: 600;
+      padding: 20px 25px;
+      border-radius: 10px 10px 0 0 !important;
+      transition: all 0.3s;
+    }
+    
+    .accordion-button:not(.collapsed) {
+      background-color: var(--primary) !important;
+      color: var(--light) !important;
+      box-shadow: none;
+    }
+    
+    .accordion-button::after {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23262626'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+      transition: all 0.3s;
+    }
+    
+    .accordion-button:not(.collapsed)::after {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    }
+    
+    .accordion-body {
+      background-color: var(--light);
+      padding: 20px 25px;
+      border-radius: 0 0 10px 10px;
+      line-height: 1.7;
+    }
+    
+    /* Question Counter */
+    .question-number {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 30px;
+      margin-right: 15px;
+      font-size: 0.9rem;
+    }
+    
+    .accordion-button:not(.collapsed) .question-number {
+      background: var(--light);
+      color: var(--primary);
+    }
+    
+    /* Contact CTA */
+    .contact-cta {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      padding: 50px 0;
+      margin-top: 70px;
+      color: white;
+      text-align: center;
+      border-radius: 15px;
+    }
+    
+    .contact-cta h3 {
+      font-family: 'Playfair Display', serif;
+      margin-bottom: 20px;
+    }
+    
+    .contact-btn {
+      background: white;
+      color: var(--primary);
+      border: none;
+      padding: 12px 30px;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: all 0.3s;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .contact-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    
+    /* Footer */
+    .faq-footer {
+      background: var(--dark);
+      color: white;
+      padding: 30px 0;
+      margin-top: 70px;
+      text-align: center;
+    }
+    
+    .social-links a {
+      color: white;
+      margin: 0 10px;
+      font-size: 1.2rem;
+      transition: all 0.3s;
+    }
+    
+    .social-links a:hover {
+      color: var(--primary);
+      transform: translateY(-3px);
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.6s ease-out forwards;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .faq-header h1 {
+        font-size: 2.5rem;
+      }
+      
+      .nav-tabs .nav-link {
+        margin: 5px;
+        padding: 10px 15px;
+      }
+      
+      .accordion-button {
+        padding: 15px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Premium Header with Background Image -->
+  <header class="faq-header">
+    <div class="container">
+      <h1>Frequently Asked Questions</h1>
+      <p>Find answers to all your questions about orders, deliveries, returns, and more. Can't find what you're looking for? Contact our support team.</p>
+    </div>
+  </header>
+
+  <!-- Search Bar -->
+  <div class="container">
+    <div class="search-container fade-in">
+      <div class="input-group">
+        <input type="text" class="form-control search-input" placeholder="Search questions...">
+        <button class="btn search-btn" type="button">
+          <i class="fas fa-search"></i> Search
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ Tabs -->
+  <section class="container">
+    <ul class="nav nav-tabs" id="faqTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="customer-tab" data-bs-toggle="tab" data-bs-target="#customer" role="tab" aria-controls="customer" aria-selected="true">
+          <i class="fas fa-user me-2"></i> Customer FAQs
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="delivery-tab" data-bs-toggle="tab" data-bs-target="#delivery" role="tab" aria-controls="delivery" aria-selected="false">
+          <i class="fas fa-truck me-2"></i> Delivery FAQs
+        </button>
+      </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="faqTabContent">
+      <!-- Customer FAQs -->
+      <div class="tab-pane fade show active" id="customer" role="tabpanel" aria-labelledby="customer-tab">
+        <div class="accordion mt-3" id="customerAccordion"></div>
+      </div>
+
+      <!-- Delivery FAQs -->
+      <div class="tab-pane fade" id="delivery" role="tabpanel" aria-labelledby="delivery-tab">
+        <div class="accordion mt-3" id="deliveryAccordion"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact CTA -->
+  <section class="container">
+    <div class="contact-cta fade-in">
+      <h3>Still have questions?</h3>
+      <p>Our customer care team is available 24/7 to assist you with any queries.</p>
+      <button class="btn contact-btn">
+        <i class="fas fa-headset me-2"></i> Contact Support
+      </button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="faq-footer">
+    <div class="container">
+      <div class="social-links mb-3">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-pinterest-p"></i></a>
+      </div>
+      <p>&copy; 2025 FashionFinds. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS and Popper.js -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- JavaScript to Dynamically Generate FAQs -->
+  <script>
+    // Array of Customer FAQs
+    const customerFaqs = [
+      { question: "How do I place an order?", answer: "Browse our collection, select your favorite items, add them to your cart, and proceed through our secure checkout process. You'll receive an order confirmation email once your purchase is complete." },
+      { question: "Can I cancel my order?", answer: "Yes, orders can be cancelled within 30 minutes of placement through your account dashboard. After this window, please contact our support team for assistance." },
+      { question: "What payment methods are accepted?", answer: "We accept all major credit/debit cards, PayPal, Apple Pay, Google Pay, and select cryptocurrencies for a seamless checkout experience." },
+      { question: "How long does delivery take?", answer: "Standard delivery takes 3-5 business days after processing. Express options are available at checkout for faster delivery." },
+      { question: "Can I track my order?", answer: "Absolutely! Once your order ships, you'll receive a tracking link via email that provides real-time updates on your package's journey." },
+      { question: "What if my order is delayed?", answer: "In rare cases of delay, check your tracking information first. If concerned, our support team can investigate and provide updates on your shipment status." },
+      { question: "Do you offer refunds?", answer: "Yes, we offer refunds for eligible returns processed within 15 days of delivery. Refunds are issued to the original payment method." },
+      { question: "How do I return an item?", answer: "Initiate returns through your account dashboard. Print the prepaid label, securely package your return, and drop it at any authorized carrier location." },
+      { question: "Can I exchange an item?", answer: "Yes, exchanges are available for most items in different sizes or colors, subject to availability. Start the exchange process in your account." },
+      { question: "What's your return policy?", answer: "Items must be unworn, unwashed, with original tags attached, and returned within 15 days. Final sale items are not eligible for return." },
+      { question: "What if I receive a damaged item?", answer: "Contact us immediately with photos of the damage. We'll arrange for a replacement or refund and may request return of the damaged item." },
+      { question: "Do you charge for returns?", answer: "Standard returns are free within our policy. Expedited return shipping or international returns may incur charges." },
+      { question: "Can I modify my delivery address?", answer: "Address changes are possible before shipment. Contact support immediately with your order number and updated address details." },
+      { question: "Do you ship internationally?", answer: "Currently, we only ship within the continental United States. We're working to expand our international shipping options soon." },
+      { question: "Are there hidden charges?", answer: "No hidden fees. All prices include applicable taxes, and shipping costs are clearly displayed before checkout." },
+      { question: "How do I check my order status?", answer: "Log into your account to view order history with detailed status updates, or use the tracking link in your shipping confirmation email." },
+      { question: "What if I miss my delivery?", answer: "Carriers typically attempt delivery 3 times before returning to sender. You'll receive instructions for rescheduling or pickup after the first attempt." },
+      { question: "Can I request a specific delivery time?", answer: "While we can't guarantee specific times, you may include delivery instructions during checkout for the carrier's reference." },
+      { question: "How do I reset my password?", answer: "Click 'Forgot Password' on the login page to receive reset instructions via email. The link expires in 24 hours for security." },
+      { question: "Why is my payment failing?", answer: "Common reasons include incorrect card details, insufficient funds, or bank authorization issues. Try an alternative payment method or contact your bank." }
+    ];
+
+    // Array of Delivery FAQs
+    const deliveryFaqs = [
+      { question: "What is my delivery schedule?", answer: "Delivery routes are optimized daily and assigned via our driver app. Check your schedule each morning for the most efficient route." },
+      { question: "What if the package is damaged?", answer: "Do not deliver damaged packages. Document the damage with photos in the app and return to the warehouse for quality inspection." },
+      { question: "What if the customer isn't home?", answer: "Attempt contact via phone if provided. Leave a delivery attempt notice and follow protocol for second attempts or pickup instructions." },
+      { question: "Can I accept COD payments?", answer: "Yes, but only exact cash amounts. Provide receipts for all COD transactions and deposit funds according to company procedures." },
+      { question: "What if the customer refuses delivery?", answer: "Note the refusal reason in the app, obtain signature if possible, and return the package to the designated return location." },
+      { question: "How do I handle complaints?", answer: "Remain professional, document concerns in the app, and escalate serious issues to support for immediate resolution." },
+      { question: "Should I help customers try items?", answer: "No, our policy prohibits assisting with trying on items. Deliveries should be contactless unless signature is required." },
+      { question: "What if the customer wants to return?", answer: "Direct them to initiate returns through our website or app. Only accept returns if you have explicit authorization and proper documentation." },
+      { question: "How do I update delivery status?", answer: "Use the driver app to mark deliveries as complete, attempted, or problematic with required notes and photos when applicable." },
+      { question: "What if my app crashes?", answer: "Restart your device and app. If issues persist, call tech support while maintaining your delivery schedule where possible." },
+      { question: "Can I leave packages at the door?", answer: "Only with explicit customer permission noted in the order details. Always prioritize secure delivery locations when unattended." },
+      { question: "What should I do with undeliverable orders?", answer: "Follow the specific instructions in the app for each undeliverable package, which may include return to warehouse or alternate drop-off." },
+      { question: "How do I report issues?", answer: "Use the incident reporting feature in the driver app with detailed notes and supporting photos when possible for documentation." },
+      { question: "What's the expected delivery timeline?", answer: "Complete all assigned deliveries within your scheduled shift. Notify dispatch immediately if delays are anticipated." },
+      { question: "How do I handle fragile items?", answer: "Fragile items are marked in the app. Handle with extra care, use appropriate equipment, and never stack heavy items on marked packages." },
+      { question: "What if I lose an order?", answer: "Immediately report lost packages to dispatch with details of when and where it was last accounted for in your possession." },
+      { question: "Do I get paid for COD orders?", answer: "COD transactions are accounted for in your regular pay cycle following verification of funds received and properly deposited." },
+      { question: "What if the address is incorrect?", answer: "Use GPS verification in the app. If discrepancies exist, contact the customer first, then support if unable to resolve." },
+      { question: "Can I deliver multiple orders at once?", answer: "Yes, batch deliveries are encouraged when efficient. Use route optimization tools in the app to maximize productivity." },
+      { question: "What if the customer is unavailable?", answer: "Follow the specific customer instructions in the app for unattended delivery, which may include safe drop-off locations or reattempt protocols." }
+    ];
+
+    // Function to generate FAQs dynamically with enhanced features
+    function generateFAQs(faqs, accordionId) {
+      const accordion = document.getElementById(accordionId);
+      accordion.innerHTML = ''; // Clear existing content
+      
+      faqs.forEach((faq, index) => {
+        const accordionItem = document.createElement('div');
+        accordionItem.className = 'accordion-item fade-in';
+        accordionItem.style.animationDelay = `${index * 0.05}s`;
+        
+        accordionItem.innerHTML = `
+          <h2 class="accordion-header" id="heading${accordionId}-${index}">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#collapse${accordionId}-${index}" aria-expanded="false" 
+                    aria-controls="collapse${accordionId}-${index}">
+              <span class="question-number">${index + 1}</span>
+              ${faq.question}
+            </button>
+          </h2>
+          <div id="collapse${accordionId}-${index}" class="accordion-collapse collapse" 
+               aria-labelledby="heading${accordionId}-${index}" 
+               data-bs-parent="#${accordionId}">
+            <div class="accordion-body">
+              <p>${faq.answer}</p>
+              ${index % 3 === 0 ? `<div class="mt-3"><a href="#" class="text-primary">Was this helpful? <i class="fas fa-thumbs-up ms-2"></i><i class="fas fa-thumbs-down ms-2"></i></a></div>` : ''}
+            </div>
+          </div>
+        `;
+        
+        accordion.appendChild(accordionItem);
+      });
+    }
+
+    // Generate FAQs for both categories
+    generateFAQs(customerFaqs, "customerAccordion");
+    generateFAQs(deliveryFaqs, "deliveryAccordion");
+
+    // Search functionality
+    document.querySelector('.search-btn').addEventListener('click', function() {
+      const searchTerm = document.querySelector('.search-input').value.toLowerCase();
+      const activeTab = document.querySelector('.tab-pane.active');
+      const questions = activeTab.querySelectorAll('.accordion-button');
+      
+      let found = false;
+      
+      questions.forEach(question => {
+        const questionText = question.textContent.toLowerCase();
+        const parentItem = question.closest('.accordion-item');
+        
+        if (questionText.includes(searchTerm)) {
+          parentItem.style.display = 'block';
+          found = true;
+          
+          // Auto-expand matching questions
+          const collapseId = question.getAttribute('data-bs-target');
+          const collapse = document.querySelector(collapseId);
+          new bootstrap.Collapse(collapse, { toggle: true });
+        } else {
+          parentItem.style.display = 'none';
+        }
+      });
+      
+      if (!found) {
+        alert('No matching questions found. Try different keywords.');
+        questions.forEach(question => {
+          question.closest('.accordion-item').style.display = 'block';
+        });
+      }
+    });
+
+    // Allow search on Enter key
+    document.querySelector('.search-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        document.querySelector('.search-btn').click();
+      }
+    });
+
+    // Tab change animation
+    const tabLinks = document.querySelectorAll('[data-bs-toggle="tab"]');
+    tabLinks.forEach(link => {
+      link.addEventListener('shown.bs.tab', function() {
+        const targetId = this.getAttribute('data-bs-target');
+        const targetContent = document.querySelector(targetId);
+        const accordionItems = targetContent.querySelectorAll('.accordion-item');
+        
+        accordionItems.forEach((item, index) => {
+          item.style.animationDelay = `${index * 0.05}s`;
+          item.classList.add('fade-in');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

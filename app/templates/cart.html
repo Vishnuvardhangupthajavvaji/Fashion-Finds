@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    {% if not current_user.is_authenticated %}
+    <div class="alert alert-warning text-center">
+        <h4>Please <a href="{{ url_for('auth.login') }}" class="text-primary">log in</a> or <a href="{{ url_for('auth.register') }}" class="text-primary">create an account</a> to access your cart.</h4>
+    </div>
+    {% else %}
+    <h2 class="fw-bold text-center mb-4">My <span class="text-primary">Shopping Cart</span> ({{ cart_items|length }} items)</h2>
+    
+    {% if cart_items %}
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="list-group">
+            {% for cart, item in cart_items %}
+            <div class="list-group-item d-flex align-items-center shadow-lg p-4 mb-4 rounded-lg" data-product-id="{{ item.id }}" data-price="{{ item.price }}" data-discount="{{ item.discount }}">
+                <img src="{{ url_for('views.get_image', filename=item.product_picture) }}" class="cart-img me-4" alt="{{ item.product_name }}">
+                <div class="flex-grow-1">
+                    <h5 class="mb-2 fw-semibold">{{ item.product_name }}</h5>
+                    <p class="mb-2 text-muted fs-5">Rs. <span class="item-price" data-price="{{ item.price }}">{{ item.price }}</span></p>
+                    <div class="d-flex gap-3">
+                        <form action="{{ url_for('views.remove_from_cart', product_id=item.id) }}" method="post">
+                            <button type="submit" class="btn btn-dark btn-sm">Remove</button>
+                        </form>
+                        <form action="{{ url_for('views.remove_from_wishlist', product_id=item.id) }}" method="post">
+                            <button type="submit" class="btn btn-outline-secondary btn-sm">Move to Wishlist</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="ms-4">
+                    <input type="number" class="form-control quantity-input" value="{{ cart.quantity }}" min="1" data-product-id="{{ item.id }}">
+                </div>
+            </div>
+            {% endfor %}
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-lg p-4 rounded-lg">
+                <h4 class="fw-bold text-center">Order Summary</h4>
+                <hr>
+                <p class="fs-5">Total MRP: <strong class="total-mrp">Rs.{{ total_mrp }}</strong></p>
+                <p class="fs-5">Discount: <strong class="discount-mrp">Rs.{{ total_discount }}</strong></p>
+                <p class="fs-4 fw-bold">Final Amount: <span class="final-amount">Rs.{{ total_amount }}</span></p>
+                <a href="{{ url_for('views.checkout') }}" class="btn btn-primary w-100 mt-3">
+                    Proceed to Checkout
+                </a>
+                            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center mt-5">
+        <h4>Your cart is empty 🛒</h4>
+        <a href="{{ url_for('views.homepage') }}" class="btn btn-primary mt-3">Continue Shopping</a>
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+
+<style>
+    .cart-img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+    .card {
+        border-radius: 12px;
+    }
+    .list-group-item {
+        border-radius: 12px;
+        transition: transform 0.2s;
+    }
+    .list-group-item:hover {
+        transform: scale(1.02);
+    }
+    .alert-warning {
+        background-color: #FFF3CD;
+        border-color: #FFEEBA;
+        color: #856404;
+        padding: 20px;
+        border-radius: 10px;
+    }
+</style>
+
+<script>
+document.querySelectorAll(".quantity-input").forEach(input => {
+    input.addEventListener("change", function() {
+        let productId = this.getAttribute("data-product-id");
+        let newQuantity = this.value;
+        
+        fetch(`/update_cart_quantity/${productId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `quantity=${newQuantity}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.querySelector(".total-mrp").textContent = `Rs.${data.total_mrp}`;
+            document.querySelector(".discount-mrp").textContent = `Rs.${data.discount_mrp}`;
+            document.querySelector(".final-amount").textContent = `Rs.${data.total_amount}`;
+        });
+    });
+});
+</script>
+
+{% endblock %}

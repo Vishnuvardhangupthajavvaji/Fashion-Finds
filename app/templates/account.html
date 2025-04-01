@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="account-container">
+    <div class="account-card">
+        <div class="account-header">
+            <h3>Account Details</h3>
+        </div>
+        <div class="account-body">
+            <div class="account-row">
+                <!-- Personal Information -->
+                <div class="account-column">
+                    <h5 class="account-subtitle">Personal Information</h5>
+                    <div class="account-details">
+                        <p><strong>Name:</strong> {{ current_user.name }}</p>
+                        <p><strong>Email:</strong> {{ current_user.email }}</p>
+                        <p><strong>Phone:</strong> {{ current_user.phone }}</p>
+                        <p><strong>Role:</strong> {{ current_user.role }}</p>
+                    </div>
+                </div>
+
+                <!-- Address Information -->
+                <div class="account-column">
+                    <h5 class="account-subtitle">Address Information</h5>
+                    <div class="account-details">
+                        <p><strong>Address:</strong> {{ current_user.address }}</p>
+                        <p><strong>City:</strong> {{ current_user.city }}</p>
+                        <p><strong>State:</strong> {{ current_user.state }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Specific Buttons -->
+            {% if current_user.role == 'admin' %}
+            <div class="account-actions admin-actions">
+                <a href="{{ url_for('admin.role_approval') }}" class="account-button account-button-admin">
+                    <i class="fas fa-user-shield"></i> Role Approval
+                </a>
+                <a href="{{ url_for('admin.admin_dashboard') }}" class="account-button account-button-admin">
+                    <i class="fas fa-tachometer-alt"></i> Visit Dashboard
+                </a>
+                <a href="{{ url_for('admin.add_products') }}" class="account-button account-button-admin">
+                    <i class="fas fa-plus-circle"></i> Add Products
+                </a>
+
+                <a href="{{ url_for('admin.view_products')}}" class="account-button account-button-admin">
+                    <i class="far fa-eye"></i> View Products
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Delivery Person Specific Buttons -->
+            {% if current_user.role == 'delivery_agent' and current_user.approved == 1%}
+            <div class="account-actions delivery-actions">
+                <a href="{{ url_for('auth.delivery_dashboard') }}" class="account-button account-button-delivery">
+                    <i class="fas fa-truck"></i> Delivery Dashboard
+                </a>
+            </div>
+            <div class="account-actions delivery-actions">
+                <a href="{{ url_for('auth.order_info') }}" class="account-button account-button-delivery">
+                    <i class="fas fa-truck"></i> Orders Info
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Action Buttons -->
+            <div class="account-actions">
+                <a href="{{ url_for('auth.update_profile') }}" class="account-button account-button-primary">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </a>
+                <a href="{{ url_for('auth.update_password') }}" class="account-button account-button-outline">
+                    <i class="fas fa-lock"></i> Change Password
+                </a>
+                <a href="{{ url_for('auth.logout') }}" class="account-button account-button-danger">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+    /* General Styles */
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .account-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .account-card {
+        background-color: white;
+        border-radius: 15px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        width: 100%;
+        max-width: 900px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .account-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .account-header {
+        background-color: #c4877a;
+        color: white;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .account-header h3 {
+        margin: 0;
+        font-size: 1.75rem;
+        font-weight: 700;
+    }
+
+    .account-body {
+        padding: 30px;
+    }
+
+    .account-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .account-column {
+        flex: 1;
+        min-width: 250px;
+    }
+
+    .account-subtitle {
+        color: #c4877a;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #c4877a;
+        padding-bottom: 8px;
+    }
+
+    .account-details p {
+        font-size: 1rem;
+        color: #333;
+        margin: 10px 0;
+    }
+
+    .account-details strong {
+        color: #000;
+    }
+
+    .account-actions {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+    }
+
+    .admin-actions, .delivery-actions {
+        margin-bottom: 20px;
+        border-top: 2px dashed #c4877a;
+        padding-top: 20px;
+    }
+
+    .account-button {
+        display: inline-flex;
+        align-items: center;
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        gap: 10px;
+    }
+
+    .account-button-primary {
+        background-color: #c4877a;
+        color: white;
+        border: none;
+    }
+
+    .account-button-primary:hover {
+        background-color: #a56b5f;
+        transform: translateY(-2px);
+    }
+
+    .account-button-outline {
+        background-color: transparent;
+        border: 2px solid #c4877a;
+        color: #c4877a;
+    }
+
+    .account-button-outline:hover {
+        background-color: #c4877a;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .account-button-danger {
+        background-color: transparent;
+        border: 2px solid #c4877a;
+        color: #c4877a;
+    }
+
+    .account-button-danger:hover {
+        background-color: #c4877a;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    /* Admin buttons - using a darker shade of the main color */
+    .account-button-admin {
+        background-color: #c4877a;
+        color: white;
+        border: none;
+    }
+
+    .account-button-admin:hover {
+        background-color: #c4877a;
+        transform: translateY(-2px);
+    }
+
+    /* Delivery buttons - using a complementary earthy green */
+    .account-button-delivery {
+        background-color: #c4877a;
+        color: white;
+        border: none;
+    }
+
+    .account-button-delivery:hover {
+        background-color: #c4877a;
+        transform: translateY(-2px);
+    }
+
+    .fas {
+        margin-right: 8px;
+    }
+</style>
+{% endblock %}
