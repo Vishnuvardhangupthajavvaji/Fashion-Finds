@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %} Delivery Dashboar {% endblock %}
+
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/delivery.css') }}">
+
+
+    <h2 class="title" style="color: #C4877A; font-size: 30px; font-weight: bold;">Delivery Agents Info</h2>
+    {% for city,agent_list in agents.items() %}
+        <div class="container">
+            <!-- delivery agents info -->
+            <div class="section">
+                <h3>{{ city }}</h3>
+                {% if agent_list %}
+                    {% for agent in agent_list %}
+                        {% if agent.approved %}
+                            <h3 style="text-align: left;">ID : {{ agent.id }} <br> NAME : {{ agent.name }} </h3>
+                                {% if orders[agent.id] %}
+                                    <table>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Customer Name</th>
+                                            <th>Address</th>
+                                            <th>Status</th>
+                                        </tr>
+                                        {% for order in orders[agent.id] %}
+                                        <tr>
+                                            <td>{{ order.id }}</td>
+                                            <td>{{ order.customer_name }}</td>
+                                            <td>{{ order.address_line_1 }}</td>
+                                            <td>{{ order.status }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </table>
+                                {% else %}
+                                    <h3>No orders taken</h3>
+                                {% endif %}
+                                <br>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <p class="empty">No delivered orders</p>
+
+
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

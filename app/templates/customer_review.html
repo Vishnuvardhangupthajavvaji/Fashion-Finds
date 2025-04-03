@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/customer_review.css') }}">
+    <title>Rate Products for Order #{{ order.id }}</title>
+</head>
+<body>
+  <div class="product-rating-container">
+    {% if not order.has_rated and order.status == "Delivered" %}
+      <h2>Review Your Order #{{ order.id }}</h2>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      <form method="POST" action="{{ url_for('delivery.customer_review', user_id=user.id, order_id=order.id, token=token) }}">
+        {% for product in products %}
+          <div class="card">
+            <img src="{{ url_for('admin.get_image', filename=product.product_picture) }}"
+                 alt="{{ product.product_name }}" class="product-image">
+            <h3>Rate {{ product.product_name }}</h3>
+            <div class="star-rating">
+              <input id="star5_{{ product.id }}" type="radio" name="rating_{{ product.id }}" value="5" required>
+              <label for="star5_{{ product.id }}" title="5 stars"></label>
+              <input id="star4_{{ product.id }}" type="radio" name="rating_{{ product.id }}" value="4">
+              <label for="star4_{{ product.id }}" title="4 stars"></label>
+              <input id="star3_{{ product.id }}" type="radio" name="rating_{{ product.id }}" value="3">
+              <label for="star3_{{ product.id }}" title="3 stars"></label>
+              <input id="star2_{{ product.id }}" type="radio" name="rating_{{ product.id }}" value="2">
+              <label for="star2_{{ product.id }}" title="2 stars"></label>
+              <input id="star1_{{ product.id }}" type="radio" name="rating_{{ product.id }}" value="1">
+              <label for="star1_{{ product.id }}" title="1 star"></label>
+            </div>
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Submit Ratings</button>
+      </form>
+    {% else %}
+      <p>This order has either been rated or is not yet delivered.</p>
+    {% endif %}
+  </div>
+  <script>
+    document.querySelectorAll('.star-rating input').forEach(star => {
+      star.addEventListener('change', () => {
+        console.log('Rating selected for product:', star.name, 'Value:', star.value);
+      });
+    });
+  </script>
+</body>
+</html>
+{% endblock %}

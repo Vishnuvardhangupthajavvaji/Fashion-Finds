@@ -21,7 +21,7 @@
                         <button type="submit" class="btn btn-outline-danger btn-sm wishlist-btn">❤️</button>
                     </form>
                     <!-- Product Image -->
-                    <img src="{{ url_for('static', filename=product.product_picture) }}" class="card-img-top product-img" alt="{{ product.product_name }}">
+                    <img src="{{ url_for('admin.get_image', filename=product.product_picture) }}" class="card-img-top product-img" alt="{{ product.product_name }}">
                 </div>
 
                 <!-- Product Details -->
@@ -36,7 +36,7 @@
                     <!-- Action Buttons -->
                     <div class="mt-auto">
                         <div class="d-flex justify-content-center gap-2">
-                            <form action="{{ url_for('views.cart_add', product_id=product.id) }}" method="POST">
+                            <form action="{{ url_for('views.add_to_cart', product_id=product.id) }}" method="POST">
                                 <button type="submit" class="btn btn-sm btn-primary">Add to Cart</button>
                             </form>
                             <a href="{{ url_for('views.product_info', product_id=product.id) }}" class="btn btn-sm btn-outline-secondary">View Details</a>

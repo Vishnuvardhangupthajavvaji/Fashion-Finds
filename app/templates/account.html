@@ -36,7 +36,7 @@
                 <a href="{{ url_for('admin.role_approval') }}" class="account-button account-button-admin">
                     <i class="fas fa-user-shield"></i> Role Approval
                 </a>
-                <a href="{{ url_for('admin.admin_dashboard') }}" class="account-button account-button-admin">
+                <a href="{{ url_for('delivery.delivery_agents_info') }}" class="account-button account-button-admin">
                     <i class="fas fa-tachometer-alt"></i> Visit Dashboard
                 </a>
                 <a href="{{ url_for('admin.add_products') }}" class="account-button account-button-admin">
@@ -52,13 +52,8 @@
             <!-- Delivery Person Specific Buttons -->
             {% if current_user.role == 'delivery_agent' and current_user.approved == 1%}
             <div class="account-actions delivery-actions">
-                <a href="{{ url_for('auth.delivery_dashboard') }}" class="account-button account-button-delivery">
+                <a href="{{ url_for('delivery.dashboard', id=current_user.id) }}" class="account-button account-button-delivery">
                     <i class="fas fa-truck"></i> Delivery Dashboard
-                </a>
-            </div>
-            <div class="account-actions delivery-actions">
-                <a href="{{ url_for('auth.order_info') }}" class="account-button account-button-delivery">
-                    <i class="fas fa-truck"></i> Orders Info
                 </a>
             </div>
             {% endif %}

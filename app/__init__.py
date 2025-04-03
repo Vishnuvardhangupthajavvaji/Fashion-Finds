@@ -3,6 +3,7 @@ from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
+from flask_mail import Mail
 
 db = SQLAlchemy()
 mail = Mail()
@@ -20,16 +21,19 @@ def create_app():
 
     
     # Mail Configuration
-    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_SERVER']='smtp.gmail.com'
     app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USERNAME'] = 'vishnujavvaji19@gmail.com'
+    app.config['MAIL_PASSWORD'] = 'aiun nsnp auvd nrbt' #   'oowd hosw eeuv jguy'
     app.config['MAIL_USE_TLS'] = True
-    app.config['MAIL_USERNAME'] = 'vkumar080@rku.ac.in'  # Update with your email
-    app.config['MAIL_PASSWORD'] = 'oqpj npkl jyxh hijh'   # Update with your app password
-    app.config['MAIL_DEFAULT_SENDER'] = 'vkumar080@rku.ac.in'
+    app.config['MAIL_USE_SSL'] = False
+    app.config['MAIL_DEFAULT_SENDER'] = 'vishnujavvaji19@gmail.com'
+
+    mail.init_app(app)
 
     # Initialize extensions
     db.init_app(app)
-    mail.init_app(app)
+    # mail.init_app(app)
     login_manager.init_app(app)
     migrate.init_app(app, db)
     
@@ -46,11 +50,14 @@ def create_app():
     from app.auth import auth_bp
     from app.admin import admin
     from app.views import views
+    from app.delivery import delivery_bp
 
     # Register blueprints
     app.register_blueprint(views, url_prefix="/")
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(admin, url_prefix="/admin")
+    app.register_blueprint(delivery_bp, url_prefix="/delivery")
+
 
     with app.app_context():
         db.create_all()

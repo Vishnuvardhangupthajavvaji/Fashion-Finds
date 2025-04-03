@@ -826,3 +826,58 @@ def place_order():
     db.session.commit()
 
     return jsonify({"success": True})
+
+@views.route('/my_orders')
+@login_required
+def my_orders():
+
+    orders = Order.query.filter_by(user_id=current_user.id).all()
+    orders_with_items = []
+    for order in orders:
+        order_items = OrderItem.query.filter_by(order_id=order.id).all()
+        items_data = [{'name': item.product.product_name, 'quantity': item.quantity} for item in order_items]
+
+        orders_with_items.append({
+            'id': order.id,
+            'status': order.status,
+            'total_price': order.total_price,
+            'order_items': items_data
+        })
+
+    return render_template('my_orders.html', orders=orders_with_items)
+
+@views.route('/order/<int:order_id>', methods=['GET'])
+@login_required
+def view_order_items(order_id):
+    order = Order.query.get(order_id)
+    if not order or order.user_id != session.get('user_id'):
+        flash('Order not found!', 'danger')
+        return redirect(url_for('views.my_orders'))
+
+    order_items = OrderItem.query.filter_by(order_id=order.id).all()
+    return render_template('view_order.html', order=order, order_items=order_items)
+
+
+@views.route('/cancel_order/<int:order_id>', methods=['POST'])
+@login_required
+def cancel_order(order_id):
+    user_id = current_user.id
+    order = Order.query.get_or_404(order_id)
+    if order.user_id != user_id:
+        flash('You can only cancel your own orders.', 'danger')
+        return redirect(url_for('views.my_orders'))
+
+    order.status = 'Cancelled'
+    
+    # order_items = OrderItem.query.filter_by(order_id=order_id).all()
+    # for order_item in order_items:
+    #     product = Product.query.get(order_item.product_id)
+    #     product.quantity += order_item.quantity
+
+    db.session.commit()
+    return redirect(url_for('views.my_orders'))
+
+
+@views.route('/faqs', methods=['GET', 'POST'])
+def faqs():
+    return render_template('faqs.html')

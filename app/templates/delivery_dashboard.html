@@ -1,11 +1,121 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delivery Dashboard</title>
-</head>
-<body>
-    <h1>Welcome To delivery_dashboard</h1>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %} Delivery Dashboar {% endblock %}
+
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/delivery.css') }}">
+
+
+    <h2 class="title" style="color: #C4877A; font-size: 30 px; font-weight: bold;">Delivery Dashboard</h2>
+
+    <div class="container">
+        <!-- New Orders Section -->
+        <div class="section">
+            <h3>New Orders</h3>
+            {% if new_orders %}
+                <table>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer Name</th>
+                        <th>address_line_1</th>
+                        <th>Action</th>
+                    </tr>
+                    {% for order in new_orders %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.customer_name }}</td>
+                        <td>{{ order.address_line_1 }}</td>
+                        <td>
+                            <a href="{{ url_for('delivery.assign_delivery', order_id=order.id, person_id=person.id) }}">
+                                <button class="btn btn-update-status" type="button">Assign Me</button>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <p class="empty">No new orders available for delivery</p>
+            {% endif %}
+        </div>
+
+        <!-- Assigned Orders Section -->
+        <div class="section">
+            <h3>Assigned Orders</h3>
+            {% if assigned_orders %}
+                <table>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer Name</th>
+                        <th>Address</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                    {% for order in assigned_orders %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.customer_name }}</td>
+                        <td>{{ order.address_line_1 }}</td>
+                        <td>
+                            <select class="statusSelect" data-order-id="{{ order.id }}">
+                                <option value="In Transit" {% if order.delivery_status == "In Transit" %}selected{% endif %}>In Transit</option>
+                                <option value="accepted" {% if order.delivery_status == "accepted" %}selected{% endif %}>Accepted</option>
+                                <option value="pending" {% if order.delivery_status == "Shipped" %}selected{% endif %}>Shipped</option>
+                                <option value="Delivered" {% if order.delivery_status == "Delivered" %}selected{% endif %}>Delivered</option>
+                                <option value="Delivered" {% if order.delivery_status == "Cancelled" %}selected{% endif %}>Cancelled</option>
+                            </select>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('delivery.update_status', order_id=order.id, status=order.delivery_status) }}" id="updateStatusLink-{{ order.id }}">
+                                <button class="btn btn-update-status">Update Status</button>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+
+                <!-- JavaScript to Update the URL Dynamically -->
+                <script>
+                    document.querySelectorAll('.statusSelect').forEach((select) => {
+                        select.addEventListener('change', function() {
+                            let orderId = this.dataset.orderId;
+                            let updateLink = document.getElementById(`updateStatusLink-${orderId}`);
+                            updateLink.href = "{{ url_for('delivery.update_status', order_id=0, status='PLACEHOLDER') }}"
+                                .replace('0', orderId)
+                                .replace('PLACEHOLDER', this.value);
+                            console.log(`Updated URL for Order ${orderId}: ${updateLink.href}`);
+                        });
+                    });
+                </script>
+            {% else %}
+                <p class="empty">No assigned orders</p>
+            {% endif %}
+        </div>
+
+        <!-- Delivered Orders Section -->
+        <div class="section">
+            <h3>Delivered Orders</h3>
+            {% if delivered %}
+                <table>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer Name</th>
+                        <th>Address</th>
+                        <th>Status</th>
+                    </tr>
+                    {% for order in delivered %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.customer_name }}</td>
+                        <td>{{ order.address_line_1 }}</td>
+                        <td>{{ order.status }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <p class="empty">No delivered orders</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -1908,3 +1908,107 @@ a:hover {
   text-align: center;
   font-size: 20px;
 }
+
+/* ---new--- */
+
+
+/* Container for products */
+.product-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center; /* Centers cards horizontally in the container */
+  padding: 20px;
+}
+
+/* Card styling */
+.card {
+  flex: 1 1 calc(25% - 20px); /* 25% width minus gap */
+  max-width: 300px; /* Optional: cap the max width */
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex; /* Ensure card contents are centered vertically */
+  flex-direction: column;
+  align-items: center; /* Center horizontally within the card */
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Image styling */
+.card-image {
+  width: 100%;
+  overflow: hidden;
+  background: #f5f5f5; /* Light background for no-image case */
+  display: flex;
+  justify-content: center; /* Center image horizontally */
+  align-items: center; /* Center image vertically */
+}
+
+.responsive-img {
+  width: 25%; /* 25% of the card width */
+  height: auto; /* Maintain aspect ratio */
+  display: block;
+  padding: 10px; /* Optional padding */
+}
+
+.no-image {
+  width: 100%;
+  height: 100px; /* Fixed height for consistency */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  font-size: 14px;
+}
+
+/* Card content */
+.card-content {
+  padding: 15px;
+  text-align: center; /* Center text and button */
+  width: 100%; /* Ensure content takes full width for consistent centering */
+}
+
+.card-title {
+  font-size: 1.2rem;
+  margin: 0 0 10px;
+  color: #333;
+}
+
+.card-price {
+  font-size: 1rem;
+  color: #666;
+  margin: 0 0 15px;
+}
+
+.view-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.view-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card {
+      flex: 1 1 calc(50% - 20px); /* 2 cards per row on tablets */
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+      flex: 1 1 100%; /* 1 card per row on mobile */
+  }
+}

@@ -41,18 +41,6 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f"<User {self.name}>"
 
-# Brand Model
-class Brand(db.Model):
-    __tablename__ = 'brands'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False, unique=True)
-    logo = db.Column(db.String(200), nullable=True)
-
-    # products = db.relationship('Product', backref='brand', lazy=True, cascade="all, delete-orphan")
-
-    def __repr__(self):
-        return f"<Brand {self.name}>"
-
 
 # Product Model
 class Product(db.Model):
@@ -77,8 +65,6 @@ class Product(db.Model):
     carts = db.relationship('Cart', backref='cart_product', lazy=True, cascade="all, delete-orphan")
     wishlists = db.relationship('Wishlist', backref='wishlist_product', lazy=True, cascade="all, delete-orphan")
     order_items = db.relationship('OrderItem', backref='product', lazy=True, cascade="all, delete-orphan")
-    # orders = db.relationship('Order', backref='product', lazy=True, cascade="all, delete-orphan")
-
     def __repr__(self):
         return f"<Product {self.product_name}, Price: {self.current_price}, Category: {self.category}>"
 
@@ -119,7 +105,6 @@ class Wishlist(db.Model):
 class Order(db.Model):
     __tablename__ = 'orders'
     id = db.Column(db.Integer, primary_key=True)
-    # product_id = db.Column(db.Integer, db.ForeignKey('products.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     total_price = db.Column(db.Float, nullable=False)
     status = db.Column(db.String(50), nullable=False, default="Pending")  # ('Pending', 'Shipped', 'Delivered', 'Cancelled')
@@ -127,7 +112,7 @@ class Order(db.Model):
     delivery_date = db.Column(db.DateTime, nullable=True)
 
     order_items = db.relationship('OrderItem', backref='order', lazy=True, cascade="all, delete-orphan")
-    # product = db.relationship("Product", back_populates="orders")
+    delivery_person_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
 
     customer_name = db.Column(db.String(100), nullable=False)
     address_line_1 = db.Column(db.String(100), nullable=False)
