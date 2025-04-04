@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div>
+        <main class="admin-container">
+
+            <div class="admin-sidebar">
+                <a href="{{ url_for('admin.order_status') }}" class="account-button account-button-admin">
+                    <i class="fas fa-tachometer-alt"></i> order status
+                </a>
+                <a href="{{ url_for('admin.user_types') }}" class="account-button account-button-admin">
+                    <i class="fas fa-tachometer-alt"></i> user types
+                </a>
+                <a href="{{ url_for('admin.order_location') }}" class="account-button account-button-admin">
+                    <i class="fas fa-tachometer-alt"></i> order location
+                </a>
+                <a href="{{ url_for('admin.revenue') }}" class="account-button account-button-admin">
+                    <i class="fas fa-tachometer-alt"></i> revenue
+                </a>
+                <a href="{{ url_for('admin.inventory') }}" class="account-button account-button-admin">
+                    <i class="fas fa-tachometer-alt"></i> inventory
+                </a>
+            </div>
+
+            <div class="admin-content">
+
+                <div class="products-container">
+                    
+                    {% if error %}
+                        <p style="color: red;">Error: {{ error }}</p>
+                    {% else %}
+                        <div id="chart" style="width: fit-content;"></div>
+                        <script>
+                            var graph =  {{ graphJSON | safe }} ;
+                            Plotly.newPlot('chart', graph.data, graph.layout);
+                        </script>
+                    {% endif %}
+                    
+
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    
+    <style>
+
+        /* General Styles */
+
+        body{
+            font-family: 'Poppins', sans-serif;
+            background-color: #F5F5F5;
+            /* margin-top : 90px;
+            margin-bottom: 90px; */
+        }
+
+        body::-webkit-scrollbar {
+            display: none; /* For Chrome, Safari, and Edge */
+        }
+
+        /* Sidebar */
+
+        .admin-sidebar {
+            width: 15%;
+            background-color: #323232; /* Dark Grey */
+            padding: 20px;
+            height: auto; /* Adjust dynamically */
+            position: absolute;
+            top: 72px; /* Adjust based on navbar height */
+            bottom: 165px; /* Adjust based on footer height */
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+        }
+
+        .admin-sidebar {
+            width: 15%;
+            background-color: #323232; /* Dark Grey */
+            padding: 20px;
+            height: calc(100vh - 72px - 165px); 
+            position:fixed;
+            top: 72px; 
+            bottom: 165px;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+        }
+
+
+
+        .admin-info {
+
+            margin-top: 30px;
+
+            width: calc(100% - 10px); /* Adjusts button width */
+            background-color: #DDD0C8;
+            color: #323232;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: background 0.3s;
+            text-align: center;
+            
+            display: block;
+        }
+
+        /* product iamges  */
+        .admin-content {
+            
+            flex-grow: 1;
+            padding: 20px;
+            background: #f6f2f2;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width : 85%;
+        }
+        .admin-btn {
+            width: calc(100% - 10px); /* Adjusts button width */
+            background-color: #DDD0C8;
+            color: #323232;
+            border: none;
+            padding: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: background 0.3s;
+            text-align: center;
+            margin: 5px auto;
+            display: block;
+        }
+        .admin-container {
+            display: flex;
+            margin-left: 330px; /* Push content to right */
+            padding: 30px;
+            flex-wrap: wrap;
+        }
+
+        .admin-avatar {
+            /* width: 90px;
+            height: 90px;
+            border-radius: 150%;
+            margin: 80px;
+            border: #323232; */
+
+            width: 120px;
+            height: 120px;
+            border-radius: 150%;
+            margin: 30px;
+            background-color: #F6F2F2; /*#5c5b5b;*/
+        }
+
+        /* Products Section */
+        .products-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content:center;
+            margin-top: 20px;
+            width: 85%;
+        }
+
+        .product-card {
+            background: white;
+            /* padding: 15px; */
+            border-radius: 10px;
+            width: 250px;
+            height: 350px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-card img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .product-card h4 {
+            margin: 20px 0;
+            font-size: 16px;
+        }
+
+        .product-card p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /*      buttonts like style      */
+
+        .account-button {
+        display: inline-flex;
+        align-items: center;
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        gap: 10px;
+    }
+
+    .account-button-primary {
+        background-color: #c4877a;
+        color: white;
+        border: none;
+    }
+
+    .account-button-primary:hover {
+        background-color: #a56b5f;
+        transform: translateY(-2px);
+    }
+
+    .account-button-outline {
+        background-color: transparent;
+        border: 2px solid #c4877a;
+        color: #c4877a;
+    }
+
+    .account-button-outline:hover {
+        background-color: #c4877a;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .account-button-danger {
+        background-color: transparent;
+        border: 2px solid #c4877a;
+        color: #c4877a;
+    }
+
+    .account-button-danger:hover {
+        background-color: #c4877a;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    /* Admin buttons - using a darker shade of the main color */
+    .account-button-admin {
+        background-color: #c4877a;
+        color: white;
+        border: none;
+    }
+
+    .account-button-admin:hover {
+        background-color: #c4877a;
+        transform: translateY(-2px);
+    }
+
+    </style>
+
+{% include 'footer.html' %}
+</body>
+</html>

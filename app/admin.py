@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, send_from_directory
-from .models import User, Product, ProductSize,  db
+from .models import User, Product, ProductSize,  db, Order
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 import os
@@ -254,3 +254,295 @@ def reject_user(id):
     except Exception as e:
         print("Error rejecting user:", e)
         return {"error": "Failed to reject user"}, 500
+
+
+# \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\        graphs          \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+@admin.route("/visualisation")
+def visualisation():
+    return redirect(url_for("admin.inventory"))
+    return render_template("Visualisation.html")
+
+from plotly import graph_objects as go
+import json
+from plotly.utils import PlotlyJSONEncoder
+import plotly.express as px
+import pandas as pd
+
+@admin.route('/order_status')
+def order_status():
+    # Check if current user is admin
+    if not current_user.is_authenticated or current_user.role != 'admin':
+        return redirect(url_for('views.homepage'))
+
+
+    # Query to count orders by status
+    order_stats = (db.session.query(Order.status, db.func.count(Order.id).label('count'))
+                  .group_by(Order.status)
+                  .all())
+    
+    # Extract labels and values
+    labels = [stat[0] for stat in order_stats]
+    values = [stat[1] for stat in order_stats]
+
+    # Create pie chart
+    fig = go.Figure(data=[go.Pie(
+        labels=labels,
+        values=values,
+        hole=0.4,  # Donut style
+        textinfo='label+percent',
+        hoverinfo='label+value+percent',
+        marker=dict(
+            colors=['#FF9999', '#66B2FF', '#99FF99', '#FFCC99'],  # Custom colors
+            line=dict(color='#FFFFFF', width=2)
+        )
+    )])
+
+    # Update layout
+    fig.update_layout(
+        title='Order Status Distribution',
+        title_x=0.5,  # Center title
+        showlegend=True,
+        annotations=[dict(
+            text='Orders',
+            x=0.5,
+            y=0.5,
+            font_size=20,
+            showarrow=False
+        )]
+    )
+
+    # Convert to JSON
+    graphJSON = json.dumps(fig, cls=PlotlyJSONEncoder)
+    
+    return render_template('visualisation.html', graphJSON=graphJSON)
+
+
+@admin.route('/user_types')
+@login_required
+def user_types():
+    try:
+        # Check if current user is admin
+        if current_user.role != 'admin':
+            return redirect(url_for('views.homepage'))
+
+        # Query to count users by role
+        user_type_data = (db.session.query(User.role, db.func.count(User.id).label('count'))
+                         .group_by(User.role)
+                         .all())
+        
+        # Extract roles and counts
+        roles = [row[0] for row in user_type_data]
+        counts = [row[1] for row in user_type_data]
+
+        # Create bar chart
+        fig = go.Figure(data=[go.Bar(
+            x=roles,
+            y=counts,
+            text=counts,  # Show values on top
+            textposition='auto',
+            marker=dict(
+                color=['#FF6B6B', '#4ECDC4', '#45B7D1'],  # Custom colors
+                line=dict(color='#FFFFFF', width=2)
+            ),
+            hovertemplate='<b>Role</b>: %{x}<br><b>Count</b>: %{y}<extra></extra>'
+        )])
+
+        # Update layout
+        fig.update_layout(
+            title='User Role Distribution',
+            title_x=0.5,  # Center title
+            xaxis_title='User Roles',
+            yaxis_title='Number of Users',
+            bargap=0.2,
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(size=12),
+            showlegend=False
+        )
+
+        # Add gridlines (corrected properties)
+        fig.update_xaxes(gridcolor='lightgrey')
+        fig.update_yaxes(gridcolor='lightgrey', gridwidth=1)
+
+        # Convert to JSON
+        graphJSON = json.dumps(fig, cls=PlotlyJSONEncoder)
+        return render_template('visualisation.html', graphJSON=graphJSON)
+
+    except Exception as e:
+        return render_template('visualisation.html', error=str(e))
+    
+@admin.route('/order_location')
+@login_required
+def order_location():
+    try:
+        # Check if current user is admin (assuming this is an admin-only view)
+        if current_user.role != 'admin':
+            return redirect(url_for('views.homepage'))
+
+        # Query to count orders by state
+        order_location_data = (db.session.query(Order.state, db.func.count(Order.id).label('count'))
+                              .group_by(Order.state)
+                              .all())
+        
+        # Extract states and counts
+        states = [row[0] for row in order_location_data]
+        counts = [row[1] for row in order_location_data]
+
+        # Create horizontal bar chart
+        fig = go.Figure(data=[go.Bar(
+            x=counts,
+            y=states,
+            orientation='h',
+            text=counts,  # Show values on bars
+            textposition='auto',
+            marker=dict(
+                color='#4ECDC4',  # Single color for all bars
+                line=dict(color='#FFFFFF', width=1)
+            ),
+            hovertemplate='<b>State</b>: %{y}<br><b>Orders</b>: %{x}<extra></extra>'
+        )])
+
+        # Update layout
+        fig.update_layout(
+            title='Order Distribution by State',
+            title_x=0.5,  # Center title
+            xaxis_title='Number of Orders',
+            yaxis_title='States',
+            bargap=0.2,
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(size=12),
+            height=max(400, len(states) * 30),  # Dynamic height based on number of states
+            showlegend=False
+        )
+
+        # Add gridlines
+        fig.update_xaxes(gridcolor='lightgrey', gridwidth=1)
+        fig.update_yaxes(gridcolor='lightgrey', gridwidth=1)
+
+        # Convert to JSON
+        graphJSON = json.dumps(fig, cls=PlotlyJSONEncoder)
+        return render_template('visualisation.html', graphJSON=graphJSON)
+
+    except Exception as e:
+        return render_template('visualisation.html', error=str(e))
+    
+@admin.route('/revenue')
+@login_required
+def revenue():
+    try:
+        # Check if current user is admin (assuming this is an admin-only view)
+        if current_user.role != 'admin':
+            return redirect(url_for('views.homepage'))
+
+        # Query orders, only including completed orders (Delivered)
+        revenue_data = (db.session.query(Order.order_date, Order.total_price)
+                        .filter(Order.status == 'Delivered')
+                       .order_by(Order.order_date)
+                       .all())
+
+        if not revenue_data:
+            return "No completed order data found in the database"
+
+        # Convert to DataFrame
+        df = pd.DataFrame(revenue_data, columns=['order_date', 'total_price'])
+
+        # Ensure data types are correct
+        df['total_price'] = df['total_price'].astype(float)
+        df['order_date'] = pd.to_datetime(df['order_date'])
+
+        # Optional: Aggregate by date (sum total_price for each date)
+        df = df.groupby('order_date')['total_price'].sum().reset_index()
+        df = df.sort_values('order_date')
+
+        # Plot Line Chart
+        fig = px.line(df, 
+                     x="order_date", 
+                     y="total_price",
+                     title="Revenue Over Time",
+                     labels={"total_price": "Revenue", "order_date": "Date"},
+                     markers=True)
+
+        # Update layout
+        fig.update_layout(
+            xaxis_title="Date",
+            yaxis_title="Revenue",
+            yaxis=dict(
+                tickformat=",",  # Thousands separator
+                tickmode="linear"
+            ),
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(size=12),
+            title_x=0.5  # Center title
+        )
+
+        # Add gridlines
+        fig.update_xaxes(gridcolor='lightgrey', gridwidth=1)
+        fig.update_yaxes(gridcolor='lightgrey', gridwidth=1)
+
+        # Convert to JSON
+        graphJSON = json.dumps(fig, cls=PlotlyJSONEncoder)
+        return render_template('visualisation.html', graphJSON=graphJSON)
+
+    except Exception as e:
+        return render_template('visualisation.html', error=str(e))
+    
+@admin.route("/inventory")
+def inventory():
+
+    try:
+        # Check if current user is admin
+        if current_user.role != 'admin':
+            return redirect(url_for('views.homepage'))
+
+        # Query to count users by role
+        # user_type_data = (db.session.query(User.role, db.func.count(User.id).label('count'))
+        #                  .group_by(User.role)
+        #                  .all())
+        product_types = (db.session.query(Product.category, db.func.count(Product.id).label('count'))
+                         .group_by(Product.category)
+                         .all())
+        
+        # Extract roles and counts
+        category = [row[0] for row in product_types]
+        counts = [row[1] for row in product_types]
+
+        # Create bar chart
+        fig = go.Figure(data=[go.Bar(
+            x=category,
+            y=counts,
+            text=counts,  # Show values on top
+            textposition='auto',
+            marker=dict(
+                color=['#FF6B6B', '#4ECDC4', '#45B7D1'],  # Custom colors
+                line=dict(color='#FFFFFF', width=2)
+            ),
+            hovertemplate='<b>Role</b>: %{x}<br><b>Count</b>: %{y}<extra></extra>'
+        )])
+
+        # Update layout
+        fig.update_layout(
+            title='Fashion Finds Inventory',
+            title_x=0.5,  # Center title
+            xaxis_title='category',
+            yaxis_title='Number of Products',
+            bargap=0.2,
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(size=12),
+            showlegend=False
+        )
+
+        # Add gridlines (corrected properties)
+        fig.update_xaxes(gridcolor='lightgrey')
+        fig.update_yaxes(gridcolor='lightgrey', gridwidth=1)
+
+        # Convert to JSON
+        graphJSON = json.dumps(fig, cls=PlotlyJSONEncoder)
+        return render_template('visualisation.html', graphJSON=graphJSON)
+
+    except Exception as e:
+        return render_template('visualisation.html', error=str(e))
+    

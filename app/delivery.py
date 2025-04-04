@@ -1,7 +1,7 @@
 from flask import Blueprint,render_template,flash,url_for,redirect,current_app,request,session
 from .models import Order,User,Product,OrderItem
 from . import db
-from flask_login import current_user
+from flask_login import current_user,login_required
 from flask_mail import Message
 
 delivery_bp = Blueprint('delivery',__name__)
@@ -59,38 +59,6 @@ def send_email(user, order, token):
         print(f"An error occurred: {e}")
 
 
-
-# @delivery_bp.route('/customer_review/<int:user_id>/<int:order_id>/<token>', methods=['GET', 'POST'])
-# def customer_review(user_id, order_id, token):
-#     user = User.query.get_or_404(user_id)
-#     order = Order.query.get_or_404(order_id)
-#     product = Product.query.get_or_404(order.product_id)
-
-#     if request.method == 'POST' and token:
-#         try:
-#             rating = int(request.form.get('rating', 0))
-#         except ValueError:
-#             flash("Invalid rating value.", "danger")
-#             return redirect(url_for('delivery.customer_review', user_id=user_id, order_id=order_id, token=token))
-
-#         if rating < 1 or rating > 5:
-#             flash("Rating must be between 1 and 5.", "danger")
-#             return redirect(url_for('delivery.customer_review', user_id=user_id, order_id=order_id, token=token))
-
-#         if product.rating > 0:
-#             product.rating = round((product.rating + rating) / 2.0, 1)
-#         else:
-#             product.rating = rating
-
-#         order.has_rated = True
-#         db.session.commit()
-#         flash("Customer Review Successful!", "success")
-
-#         return redirect(url_for('delivery.customer_review', user_id=user_id, order_id=order_id, token=token))
-
-#     return render_template('customer_review.html', user=user, order=order, token=token)
-
-
 @delivery_bp.route('/customer_review/<int:user_id>/<int:order_id>/<token>', methods=['GET', 'POST'])
 def customer_review(user_id, order_id, token):
     user = User.query.get_or_404(user_id)
@@ -140,6 +108,7 @@ def customer_review(user_id, order_id, token):
 
 
 @delivery_bp.route('/dashboard/<int:id>')
+@login_required
 def dashboard(id):
     person = User.query.get(id)
     if not person:
@@ -154,6 +123,7 @@ def dashboard(id):
 
 
 @delivery_bp.route("/delivery_agents_info")
+@login_required
 def delivery_agents_info():
     # agents = User.query.filter_by(role = "delivery_agent").all()
     
@@ -179,6 +149,7 @@ def delivery_agents_info():
 
 
 @delivery_bp.route("/update_status/<int:order_id>/<status>", methods=['GET', 'POST'])
+@login_required
 def update_status(order_id, status):
     
     order = Order.query.get(order_id)
@@ -203,6 +174,7 @@ def update_status(order_id, status):
 
 
 @delivery_bp.route('/assign_delivery/<int:order_id>/<int:person_id>', methods=['GET','POST'])
+@login_required
 def assign_delivery(order_id,person_id):
     if not current_user.is_authenticated:
         return redirect(url_for('auth.login'))
@@ -225,6 +197,37 @@ def assign_delivery(order_id,person_id):
     except Exception as e:
         print(f"////////////////////////////////////\n{e}")
         return f"{e}",400
-    
 
+
+
+
+# @delivery_bp.route('/customer_review/<int:user_id>/<int:order_id>/<token>', methods=['GET', 'POST'])
+# def customer_review(user_id, order_id, token):
+#     user = User.query.get_or_404(user_id)
+#     order = Order.query.get_or_404(order_id)
+#     product = Product.query.get_or_404(order.product_id)
+
+#     if request.method == 'POST' and token:
+#         try:
+#             rating = int(request.form.get('rating', 0))
+#         except ValueError:
+#             flash("Invalid rating value.", "danger")
+#             return redirect(url_for('delivery.customer_review', user_id=user_id, order_id=order_id, token=token))
+
+#         if rating < 1 or rating > 5:
+#             flash("Rating must be between 1 and 5.", "danger")
+#             return redirect(url_for('delivery.customer_review', user_id=user_id, order_id=order_id, token=token))
+
+#         if product.rating > 0:
+#             product.rating = round((product.rating + rating) / 2.0, 1)
+#         else:
+#             product.rating = rating
+
+#         order.has_rated = True
+#         db.session.commit()
+#         flash("Customer Review Successful!", "success")
+
+#         return redirect(url_for('delivery.customer_review', user_id=user_id, order_id=order_id, token=token))
+
+#     return render_template('customer_review.html', user=user, order=order, token=token)
 
