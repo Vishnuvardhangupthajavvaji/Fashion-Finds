@@ -55,7 +55,7 @@
             <!-- Delivery Person Specific Buttons -->
             {% if current_user.role == 'delivery_agent' and current_user.approved == 1%}
             <div class="account-actions delivery-actions">
-                <a href="{{ url_for('delivery.dashboard', id=current_user.id) }}" class="account-button account-button-delivery">
+                <a href="{{ url_for('delivery.dashboard') }}" class="account-button account-button-delivery">
                     <i class="fas fa-truck"></i> Delivery Dashboard
                 </a>
             </div>

@@ -6,7 +6,7 @@ from flask_wtf.file import FileField
 
 
 class SizeQuantityForm(FlaskForm):
-    size = StringField(label="Size", validators=[optional()], default="No size")
+    size = StringField(label="Size", validators=[optional()], default="Free Size")
     quantity = IntegerField(label="Quantity", validators=[optional(), NumberRange(min=0)],default=0)
     single_quantity = IntegerField(label="Quantity", validators=[optional(), NumberRange(min=0)],default=0)
 

@@ -28,7 +28,7 @@
                         <td>{{ order.customer_name }}</td>
                         <td>{{ order.address_line_1 }}</td>
                         <td>
-                            <a href="{{ url_for('delivery.assign_delivery', order_id=order.id, person_id=person.id) }}">
+                            <a href="{{ url_for('delivery.assign_delivery', order_id=order.id) }}">
                                 <button class="btn btn-update-status" type="button">Assign Me</button>
                             </a>
                         </td>
@@ -60,10 +60,9 @@
                         <td>
                             <select class="statusSelect" data-order-id="{{ order.id }}">
                                 <option value="In Transit" {% if order.delivery_status == "In Transit" %}selected{% endif %}>In Transit</option>
-                                <option value="accepted" {% if order.delivery_status == "accepted" %}selected{% endif %}>Accepted</option>
-                                <option value="pending" {% if order.delivery_status == "Shipped" %}selected{% endif %}>Shipped</option>
+                                <option value="Accepted" {% if order.delivery_status == "Accepted" %}selected{% endif %}>Accepted</option>
                                 <option value="Delivered" {% if order.delivery_status == "Delivered" %}selected{% endif %}>Delivered</option>
-                                <option value="Delivered" {% if order.delivery_status == "Cancelled" %}selected{% endif %}>Cancelled</option>
+                                <option value="Cancel" {% if order.delivery_status == "Cancel" %}selected{% endif %}>Cancel</option>
                             </select>
                         </td>
                         <td>

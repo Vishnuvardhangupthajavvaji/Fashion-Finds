@@ -792,7 +792,7 @@ def place_order():
         city=city,
         pincode=pincode,
         total_price=0,
-        status="Pending",
+        status="In Transit",
         mail=email
     )
     db.session.add(new_order)

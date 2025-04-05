@@ -190,25 +190,44 @@ def update_item(product_id):
                 print(f"New image assigned: {filename}")
 
         # Updating sizes
-        sizes_data = request.form.getlist("sizes")
-        for size_data in sizes_data:
-            size, quantity = size_data.split(",")
-            quantity = int(quantity)
-            existing_size = ProductSize.query.filter_by(product_id=product.id, size=size).first()
-            if existing_size:
-                existing_size.quantity = quantity
-            else:
-                new_size = ProductSize(product_id=product.id, size=size, quantity=quantity)
+        # sizes_data = request.form.getlist("sizes")
+        # for size_data in sizes_data:
+        #     size, quantity = size_data.split(",")
+        #     quantity = int(quantity)
+        #     existing_size = ProductSize.query.filter_by(product_id=product.id, size=size).first()
+        #     if existing_size:
+        #         existing_size.quantity = quantity
+        #     else:
+        #         new_size = ProductSize(product_id=product.id, size=size, quantity=quantity)
+        #         db.session.add(new_size)
+
+        try:    
+            ProductSize.query.filter_by(product_id=product.id).delete()  # Remove old sizes
+
+            for size_form in form.sizes.data:
+                if size_form["single_quantity"] == 0:  
+                    new_size = ProductSize(
+                        product_id=product.id,
+                        size=size_form["size"],
+                        quantity=size_form["quantity"]
+                    )
+                else:
+                    new_size = ProductSize(
+                        product_id=product.id,
+                        size=size_form["size"],
+                        quantity=size_form["single_quantity"]
+                    )
+
                 db.session.add(new_size)
 
-        try:
             db.session.commit()
             flash(f"{product.product_name} updated successfully!", "success")
-            return redirect(url_for("admin.view_products"))
+            return redirect("/admin/view_products")
         except Exception as e:
             db.session.rollback()
             print(f"Database error: {e}")
-            flash("Item Not Updated!!!", "danger")
+            flash('Item Not Updated!!!', "danger")
+
 
     return render_template("update_item.html", form=form, product=product)
 
@@ -372,6 +391,8 @@ def user_types():
     except Exception as e:
         return render_template('visualisation.html', error=str(e))
     
+
+
 @admin.route('/order_location')
 @login_required
 def order_location():
@@ -427,66 +448,91 @@ def order_location():
 
     except Exception as e:
         return render_template('visualisation.html', error=str(e))
-    
+  
+
 @admin.route('/revenue')
 @login_required
 def revenue():
     try:
-        # Check if current user is admin (assuming this is an admin-only view)
+        # Check if current user is admin
         if current_user.role != 'admin':
             return redirect(url_for('views.homepage'))
 
-        # Query orders, only including completed orders (Delivered)
+        # Fetch completed orders (Delivered)
         revenue_data = (db.session.query(Order.order_date, Order.total_price)
                         .filter(Order.status == 'Delivered')
-                       .order_by(Order.order_date)
-                       .all())
+                        .order_by(Order.order_date)
+                        .all())
 
         if not revenue_data:
             return "No completed order data found in the database"
 
+        print(f"revenue_data : {revenue_data}")
+
         # Convert to DataFrame
         df = pd.DataFrame(revenue_data, columns=['order_date', 'total_price'])
 
-        # Ensure data types are correct
-        df['total_price'] = df['total_price'].astype(float)
-        df['order_date'] = pd.to_datetime(df['order_date'])
+        print(f"df : {df}")
 
-        # Optional: Aggregate by date (sum total_price for each date)
-        df = df.groupby('order_date')['total_price'].sum().reset_index()
-        df = df.sort_values('order_date')
+        # Convert order_date to datetime and remove time (keep only Year-Month-Day)
+        df['order_date'] = pd.to_datetime(df['order_date']).dt.date
 
-        # Plot Line Chart
-        fig = px.line(df, 
-                     x="order_date", 
-                     y="total_price",
-                     title="Revenue Over Time",
-                     labels={"total_price": "Revenue", "order_date": "Date"},
-                     markers=True)
+        # Group by date and sum total_price
+        df = df.groupby('order_date', as_index=False)['total_price'].sum()
 
-        # Update layout
+        print(f"df grouped : {df}")
+
+        # Ensure total_price is numeric and print to verify
+        df['total_price'] = pd.to_numeric(df['total_price'], errors='coerce')
+        print(f"total_price values: {df['total_price'].tolist()}")
+
+        # Convert to lists for explicit data passing
+        x_values = df['order_date'].tolist()
+        y_values = df['total_price'].tolist()
+
+        # Plot Line Chart with explicit data and hovertemplate on trace
+        fig = go.Figure(data=go.Scatter(
+            x=x_values,
+            y=y_values,
+            mode='lines+markers',
+            hovertemplate='<b>Date</b>: %{x}<br><b>Revenue (₹)</b>: %{y:,.2f}<extra></extra>'  # Moved here
+        ))
         fig.update_layout(
+            title="Revenue Over Time",
             xaxis_title="Date",
-            yaxis_title="Revenue",
+            yaxis_title="Revenue (₹)",
+            xaxis=dict(tickformat="%Y-%m-%d"),
             yaxis=dict(
-                tickformat=",",  # Thousands separator
-                tickmode="linear"
+                range=[0, max(y_values) * 1.1],
+                tickformat=",.0f",
+                tickmode="auto",
+                dtick=500
             ),
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
             font=dict(size=12),
-            title_x=0.5  # Center title
+            title_x=0.5,
+            # height=600,
+            # width=1000,
+            # hovermode="x unified"  # Enhanced hover behavior
         )
 
-        # Add gridlines
         fig.update_xaxes(gridcolor='lightgrey', gridwidth=1)
         fig.update_yaxes(gridcolor='lightgrey', gridwidth=1)
 
-        # Convert to JSON
+        # Convert to JSON and print for debugging
         graphJSON = json.dumps(fig, cls=PlotlyJSONEncoder)
+        # Safely extract and print y-values from graphJSON
+        graph_data = json.loads(graphJSON)
+        if graph_data and 'data' in graph_data and len(graph_data['data']) > 0:
+            y_values_from_json = graph_data['data'][0].get('y', 'No y-values found')
+            print(f"graphJSON y-values: {y_values_from_json[:10] if isinstance(y_values_from_json, list) else y_values_from_json}...")
+        else:
+            print("Error: No data found in graphJSON")
         return render_template('visualisation.html', graphJSON=graphJSON)
 
     except Exception as e:
+        print(e)
         return render_template('visualisation.html', error=str(e))
     
 @admin.route("/inventory")

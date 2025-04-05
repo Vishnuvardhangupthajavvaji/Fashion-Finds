@@ -38,11 +38,11 @@
                     {% else %}
                         <div id="chart" style="width: fit-content;"></div>
                         <script>
-                            var graph =  {{ graphJSON | safe }} ;
+                            var graph = {{ graphJSON | safe }};
+                            console.log("Graph data y-values:", graph.data[0].y);  // Debug: Log y-values in browser console
                             Plotly.newPlot('chart', graph.data, graph.layout);
                         </script>
                     {% endif %}
-                    
 
                 </div>
             </div>
@@ -69,12 +69,13 @@
 
         .admin-sidebar {
             width: 15%;
-            background-color: #323232; /* Dark Grey */
+            /* background-color: #323232; Dark Grey */
+            background: #2d3436;
             padding: 20px;
             height: auto; /* Adjust dynamically */
             position: absolute;
             top: 72px; /* Adjust based on navbar height */
-            bottom: 165px; /* Adjust based on footer height */
+            /* bottom: 165px; Adjust based on footer height */
             left: 0;
             display: flex;
             flex-direction: column;
@@ -84,12 +85,14 @@
 
         .admin-sidebar {
             width: 15%;
-            background-color: #323232; /* Dark Grey */
+            /* background-color: #323232; Dark Grey */
+            background: #2d3436;
             padding: 20px;
-            height: calc(100vh - 72px - 165px); 
+            /* height: calc(100vh - 72px - 165px);  */
             position:fixed;
             top: 72px; 
-            bottom: 165px;
+            bottom: 50px;
+
             left: 0;
             display: flex;
             flex-direction: column;

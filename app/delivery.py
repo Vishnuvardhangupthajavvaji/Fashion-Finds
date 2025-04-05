@@ -107,10 +107,11 @@ def customer_review(user_id, order_id, token):
     return render_template('customer_review.html', user=user, order=order, products=products, token=token)
 
 
-@delivery_bp.route('/dashboard/<int:id>')
+@delivery_bp.route('/dashboard')
 @login_required
-def dashboard(id):
-    person = User.query.get(id)
+def dashboard():
+    # person = User.query.get(id)
+    person = current_user
     if not person:
         return "User not found", 404  # Handle non-existent users
     
@@ -164,18 +165,18 @@ def update_status(order_id, status):
                 token = user.generate_reset_token(current_app.config['SECRET_KEY'])
                 send_email(user, order_item, token)
             db.session.commit()
-            return redirect(f'/delivery/dashboard/{order.delivery_person_id}')
+            return redirect(f'/delivery/dashboard')
         except Exception as e:
             print(e)
             flash("Something went wrong!!!, please try again!!", "danger")
-            return redirect(f'/delivery/dashboard/{order.delivery_person_id}')
+            return redirect(f'/delivery/dashboard')
     else:
         return "no order exist", 400
 
 
-@delivery_bp.route('/assign_delivery/<int:order_id>/<int:person_id>', methods=['GET','POST'])
+@delivery_bp.route('/assign_delivery/<int:order_id>', methods=['GET','POST'])
 @login_required
-def assign_delivery(order_id,person_id):
+def assign_delivery(order_id):
     if not current_user.is_authenticated:
         return redirect(url_for('auth.login'))
     if current_user.role != 'delivery_agent':
@@ -184,14 +185,14 @@ def assign_delivery(order_id,person_id):
 
     try:
         order = Order.query.get(order_id)
-        person = User.query.get(person_id)
+        person = current_user
         if order and person:
-            order.delivery_person_id = person_id
-
+            order.delivery_person_id = person.id
+            order.status = "Accepted"
             db.session.commit()
             flash(f"you are assigned to {order.customer_name}'s order","success")
 
-            return redirect(f"/delivery/dashboard/{person_id}")
+            return redirect(f"/delivery/dashboard")
         else:
             return "order not exist", 400
     except Exception as e:
