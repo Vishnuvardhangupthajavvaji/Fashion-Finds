@@ -571,10 +571,10 @@ def show_cart():
         flash("Your cart is empty!", "info")
 
     # Calculate total MRP, discount, and amount for the cart items
-    total_mrp = sum(cart.quantity * product.previous_price for cart, product in cart_items)
+    total_mrp = sum(cart.quantity * product.current_price for cart, product in cart_items)
     total_discount = sum(cart.quantity * product.discount for cart, product in cart_items if product.discount)
     total_amount = int(total_mrp - total_discount)  # Ensure final amount is an integer
-
+    print(total_amount)
     # Pass the correct cart data and calculation results to the template
     return render_template(
         "cart.html", 

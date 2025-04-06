@@ -18,17 +18,17 @@
                 <img src="{{ url_for('views.get_image', filename=item.product_picture) }}" class="cart-img me-4" alt="{{ item.product_name }}">
                 <div class="flex-grow-1">
                     <h5 class="mb-2 fw-semibold">{{ item.product_name }}</h5>
-                    <p class="mb-2 text-muted fs-5">Rs. <span class="item-price" data-price="{{ item.price }}">{{ item.price }}</span></p>
+                    <p class="mb-2 text-muted fs-5">Rs. <span class="item-price" data-price="{{ item.price }}">{{ item.current_price }}</span></p>
                     <div class="d-flex gap-3">
                         <form action="{{ url_for('views.remove_from_cart', product_id=item.id) }}" method="post">
-                            <button type="submit" class="btn btn-dark btn-sm">Remove</button>
+                            <button type="submit" class="btn btn-dark btn-sm" style="margin-right: 10px;">Remove</button>
                         </form>
                         <form action="{{ url_for('views.remove_from_wishlist', product_id=item.id) }}" method="post">
                             <button type="submit" class="btn btn-outline-secondary btn-sm">Move to Wishlist</button>
                         </form>
                     </div>
                 </div>
-                <div class="ms-4">
+                <div class="ms-4" style="margin-bottom: 20px;">
                     <input type="number" class="form-control quantity-input" value="{{ cart.quantity }}" min="1" data-product-id="{{ item.id }}">
                 </div>
             </div>
@@ -41,11 +41,12 @@
                 <hr>
                 <p class="fs-5">Total MRP: <strong class="total-mrp">Rs.{{ total_mrp }}</strong></p>
                 <p class="fs-5">Discount: <strong class="discount-mrp">Rs.{{ total_discount }}</strong></p>
-                <p class="fs-4 fw-bold">Final Amount: <span class="final-amount">Rs.{{ total_amount }}</span></p>
+
+                <p class="fs-4 fw-bold">Final Amount: <strong class="final-amount">Rs.{{ total_amount }}</strong></p>
                 <a href="{{ url_for('views.checkout') }}" class="btn btn-primary w-100 mt-3">
                     Proceed to Checkout
                 </a>
-                            </div>
+            </div>
         </div>
     </div>
     {% else %}
@@ -60,11 +61,13 @@
 <style>
     .cart-img {
         width: 100px;
-        height: 100px;
+        height: 120px;
         object-fit: cover;
         border-radius: 10px;
+        margin-right: 20px;
     }
     .card {
+        min-width: 300px;
         border-radius: 12px;
     }
     .list-group-item {
