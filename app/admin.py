@@ -85,13 +85,31 @@ def add_products():
             print(f"Product added: {new_product.id}")  # Debugging
 
             # Add product sizes
+            # for size_form in form.sizes.data:
+            #     new_size = ProductSize(
+            #         product_id=new_product.id,
+            #         size=size_form["size"],
+            #         quantity=size_form["quantity"]
+            #     )
+            #     db.session.add(new_size)
+
             for size_form in form.sizes.data:
-                new_size = ProductSize(
-                    product_id=new_product.id,
-                    size=size_form["size"],
-                    quantity=size_form["quantity"]
-                )
+                if size_form["single_quantity"] == 0:
+                    new_size = ProductSize(
+                        product_id=new_product.id,
+                        size=size_form["size"],
+                        quantity=size_form["quantity"]
+                    )
+                else:
+                    new_size = ProductSize(
+                        product_id=new_product.id,
+                        size=size_form["size"],
+                        quantity=size_form["single_quantity"]
+                    )
+
                 db.session.add(new_size)
+
+            db.session.commit()
 
             db.session.commit()
             flash(f"Product '{new_product.product_name}' added successfully!", "success")
