@@ -3,6 +3,24 @@
 {% block title %}{{ product.product_name }} - Product Details{% endblock %}
 
 {% block content %}
+<style>
+    .size-value {
+        width: 40px;
+        font-weight: 500;
+    }
+
+    .quantity-value {
+        width: 40px;
+    }
+
+    .low-stock {
+        color: #e53935;
+    }
+
+    .in-stock {
+        color: #43a047;
+    }
+</style>
 <div class="container py-5">
     <div class="row">
         <div class="col-md-6 text-center">
@@ -24,7 +42,17 @@
             </p>
             <p><strong>Category:</strong> {{ product.category }}</p>
             <p><strong>Color:</strong> {{ product.color }}</p>
-            <p><strong>Stock:</strong> {{ product.stock }}</p>
+            <!-- <p><strong>Stock:</strong> {{ product.stock }}</p> -->
+            <p><strong>Stock:</strong> 
+                {% for sizes in product.quantity_size %}
+                    <tr>
+                        <td class="size-value">{{ sizes.size }}</td> -
+                        <td class="quantity-value {% if sizes.quantity < 10 %}low-stock{% else %}in-stock{% endif %}">
+                            {{ sizes.quantity }}
+                        </td> {% if product.quantity_size | length > 1 %} | {% endif %}
+                    </tr>
+                {% endfor %}
+            </p>
 
 
           

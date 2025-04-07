@@ -38,11 +38,12 @@ def send_email(user, order, token):
 )
 
     product = Product.query.get_or_404(order.product_id)
+    orders = Order.query.get_or_404(order.order_id)
     sender_email = 'vishnujavvaji19@gmail.com'
     sender_password = 'aiun nsnp auvd nrbt'
     receiver_email = user.email
     subject = 'Rate the Product'
-    body = f"Hello {order.customer_name}, \n\nYour order : {product.product_name} with ID {order.id} has been successfully delivered. Thank you for choosing us!\n\nTo rate the delivered products click : {rating_url}\n\nBest regards,\nYour Delivery Team\n\n"
+    body = f"Hello {orders.customer_name}, \n\nYour order : {product.product_name} with ID {order.id} has been successfully delivered. Thank you for choosing us!\n\nTo rate the delivered products click : {rating_url}\n\nBest regards,\nYour Delivery Team\n\n"
     message = MIMEMultipart()
     message["From"] = sender_email
     message["To"] = receiver_email
