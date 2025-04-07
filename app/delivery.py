@@ -42,7 +42,7 @@ def send_email(user, order, token):
     sender_password = 'aiun nsnp auvd nrbt'
     receiver_email = user.email
     subject = 'Rate the Product'
-    body = f"Hello {user.name}, \n\nYour order : {product.product_name} with ID {order.id} has been successfully delivered. Thank you for choosing us!\n\nTo rate the delivered products click : {rating_url}\n\nBest regards,\nYour Delivery Team\n\n"
+    body = f"Hello {order.customer_name}, \n\nYour order : {product.product_name} with ID {order.id} has been successfully delivered. Thank you for choosing us!\n\nTo rate the delivered products click : {rating_url}\n\nBest regards,\nYour Delivery Team\n\n"
     message = MIMEMultipart()
     message["From"] = sender_email
     message["To"] = receiver_email

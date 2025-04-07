@@ -11,13 +11,6 @@
   <div class="product-rating-container">
     {% if not order.has_rated and order.status == "Delivered" %}
       <h2>Review Your Order #{{ order.id }}</h2>
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">{{ message }}</div>
-          {% endfor %}
-        {% endif %}
-      {% endwith %}
       <form method="POST" action="{{ url_for('delivery.customer_review', user_id=user.id, order_id=order.id, token=token) }}">
         {% for product in products %}
           <div class="card">

@@ -14,8 +14,8 @@
         </h2>
 
         <div class="address-display" id="addressDisplay">
-            <strong>{{ current_user.firstname }} {{ current_user.lastname }}</strong><br>
-            {{ current_user.address_line_1}}<br>
+            <strong>{{ current_user.name }}</strong><br>
+            {{ current_user.address}}<br>
             {{ current_user.city}}<br>
             {{ current_user.state}}<br>
             Pincode: {{ current_user.pincode }}<br>

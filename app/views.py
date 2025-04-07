@@ -574,7 +574,7 @@ def show_cart():
     total_mrp = sum(cart.quantity * product.current_price for cart, product in cart_items)
     total_discount = sum(cart.quantity * product.discount for cart, product in cart_items if product.discount)
     total_amount = int(total_mrp - total_discount)  # Ensure final amount is an integer
-    print(total_amount)
+    print(f"total_amount : {total_amount}")
     # Pass the correct cart data and calculation results to the template
     return render_template(
         "cart.html", 
@@ -697,15 +697,31 @@ def wishlist_add(product_id):
     return redirect(url_for('views.show_wishlist'))
 
 
-@views.route('/remove_from_wishlist/<int:product_id>', methods=['POST'])
+# @views.route('/remove_from_wishlist/<int:product_id>', methods=['POST'])
+# @login_required
+# def remove_from_wishlist(product_id):
+#     user_id = current_user.id  # Use current_user to get user_id instead of session
+#     wishlist_item = Wishlist.query.filter_by(user_id=user_id, product_id=product_id).first()
+#     print(f"wishlist_item : {wishlist_item}, user_id : {user_id}, product_id : {product_id}")
+#     if wishlist_item:
+#         db.session.delete(wishlist_item)
+#         db.session.commit()
+#         flash("Product removed from wishlist!", "success")
+#     else:
+#         flash("Product not found in wishlist!", "danger")
+    
+#     return redirect(url_for('views.show_wishlist'))
+
+@views.route('/move_to_wishlist/<int:product_id>', methods=['POST'])
 @login_required
-def remove_from_wishlist(product_id):
+def move_to_wishlist(product_id):
     user_id = current_user.id  # Use current_user to get user_id instead of session
-    wishlist_item = Wishlist.query.filter_by(user_id=user_id, product_id=product_id).first()
+    wishlist_item = Wishlist(user_id=user_id, product_id=product_id)
+    print(f"wishlist_item : {wishlist_item}, user_id : {user_id}, product_id : {product_id}")
     if wishlist_item:
-        db.session.delete(wishlist_item)
+        db.session.add(wishlist_item)
         db.session.commit()
-        flash("Product removed from wishlist!", "success")
+        flash("Product moved to wishlist!", "success")
     else:
         flash("Product not found in wishlist!", "danger")
     
@@ -784,17 +800,31 @@ def place_order():
         return redirect(url_for('views.checkout'))
 
     # Create a new order (without a product_id in the Order table)
-    new_order = Order(
-        user_id=user_id,
-        customer_name=f"{firstname} {lastname}",
-        address_line_1=address_line_1,
-        state=state,
-        city=city,
-        pincode=pincode,
-        total_price=0,
-        status="In Transit",
-        mail=email
-    )
+    if( len(firstname) or len(lastname) ):
+        new_order = Order(
+            user_id=user_id,
+            customer_name=f"{firstname} {lastname}",
+            address_line_1=address_line_1,
+            state=state,
+            city=city,
+            pincode=pincode,
+            total_price=0,
+            status="In Transit",
+            mail=email
+        )
+    else :
+        new_order = Order(
+            user_id=user_id,
+            customer_name=user.name,
+            address_line_1= user.address,
+            state= user.state,
+            city= user.city,
+            pincode= user.pincode,
+            total_price=0,
+            status="In Transit",
+            mail= user.email
+        )
+    print(f" firstname : {len(firstname)}")
     db.session.add(new_order)
     db.session.commit()  # Commit to get the new order ID
 
@@ -850,7 +880,8 @@ def my_orders():
 @login_required
 def view_order_items(order_id):
     order = Order.query.get(order_id)
-    if not order or order.user_id != session.get('user_id'):
+    if not order or order.user_id != current_user.id :
+        # print(not order, order.user_id , current_user.id )
         flash('Order not found!', 'danger')
         return redirect(url_for('views.my_orders'))
 

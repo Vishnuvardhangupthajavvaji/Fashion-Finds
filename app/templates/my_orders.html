@@ -22,7 +22,7 @@
                         </ul>
                        
                         <a href="{{ url_for('views.view_order_items', order_id=order.id) }}" class="btn btn-primary">View Order</a>
-                        {% if order.status == 'Pending' %}
+                        {% if order.status == 'In Transit' %}
                         <form action="{{ url_for('views.cancel_order', order_id=order.id) }}" method="POST" class="d-inline">
                             <button type="submit" class="btn btn-danger">Cancel Order</button>
                         </form>
