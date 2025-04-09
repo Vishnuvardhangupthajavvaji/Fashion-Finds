@@ -34,8 +34,8 @@
                     <tr>
                         <td>#{{ item.id }}</td>
                         <td class="product-name">{{ item.product_name }}</td>
-                        <td class="current-price">${{ item.current_price }}</td>
-                        <td class="previous-price">${{ item.previous_price }}</td>
+                        <td class="current-price">₹{{ item.current_price }}</td>
+                        <td class="previous-price">₹{{ item.previous_price }}</td>
                         <td class="product-rating">
                             <div class="rating-display">
                                 <i class="fas fa-star"></i>
@@ -141,13 +141,13 @@
 
     /* Table Styles */
     .table-container {
-        width: 90%;
         background: var(--lighter);
         border-radius: 16px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
         overflow: hidden;
         position: relative;
         border: 1px solid rgba(0, 0, 0, 0.05);
+        width: 80%;
     }
 
     table {
@@ -187,7 +187,6 @@
     }
 
     td {
-        
         padding: 1rem 0.8rem;
         border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         vertical-align: middle;
@@ -399,7 +398,7 @@
         }
         
         table {
-            min-width: 1200px;
+            min-width: 50%;
         }
     }
 

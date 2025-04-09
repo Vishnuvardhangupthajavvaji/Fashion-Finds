@@ -129,4 +129,151 @@
     </div>
 </div>
 
+
+<style>
+
+    body {
+        font-family: Arial, sans-serif;
+        color: #262626; /* Dark text */
+        /* margin-top : 90px;
+        margin-bottom: 90px; */
+    }
+    
+    
+    body::-webkit-scrollbar {
+        display: none; /* For Chrome, Safari, and Edge */
+    }
+    .form-container {
+        max-width: 600px;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(38, 38, 38, 0.2);
+    
+        margin: auto;
+    
+        /* margin-left: 30%; */
+        border: 2px solid #C4877A; /* Warm brown border */
+    }
+    
+    .form-label {
+        font-weight: bold;
+        font-size: 14px;
+        color: #262626; /* Dark grey */
+    }
+    
+    .form-control {
+        border-radius: 6px;
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #C4877A;
+        background-color: #F5F5F5;
+        color: #262626;
+    }
+    
+    .form-control:focus {
+        border-color: #C4877A;
+        box-shadow: 0px 0px 5px rgba(196, 135, 122, 0.5);
+    }
+    
+    .btn-primary {
+        background-color: #C4877A; /* Warm brown */
+        border: none;
+        transition: 0.3s;
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        border-radius: 6px;
+        color: white;
+        font-weight: bold;
+    }
+    
+    .btn-primary:hover {
+        background-color: #a86e62; /* Slightly darker brown */
+    }
+    
+    .btn-sizes {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 6px;
+        align-items: center;
+    
+        font-size: 12px;
+        cursor: pointer;
+        transition: 0.3s;
+        text-transform: uppercase;
+        font-weight: bold;
+        background-color: #C4877A;
+        color: white;
+    }
+    
+    .form-check-input:checked {
+        background-color: #C4877A;
+        border-color: #C4877A;
+    }
+    
+    .file-input {
+        border: 1px solid #C4877A;
+        padding: 6px;
+        border-radius: 6px;
+        background-color: white;
+        width: 100%;
+        font-size: 14px;
+        color: #262626;
+    }
+    
+    ::placeholder {
+        color: #8e8e8e; /* Subtle grey placeholder text */
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    /* Updated styles for dynamic size-quantity fields */
+    
+    .size-quantity-group {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+        align-items: center;
+    }
+    
+    .size-quantity-group .form-control {
+        flex: 1;
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #C4877A;
+        background-color: #F5F5F5;
+        color: #262626;
+    }
+    
+    /* Ensures dynamically added fields maintain spacing */
+    #sizeQuantityContainer .size-quantity-group {
+        margin-top: 5px;
+    }
+    
+    /* Style for the ADD button */
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+        padding: 8px 12px;
+        font-size: 14px;
+        border-radius: 6px;
+        color: white;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #5a6268;
+    }
+    
+    
+    </style>
+
+
 {% endblock %}

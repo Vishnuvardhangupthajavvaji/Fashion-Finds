@@ -41,9 +41,9 @@ def send_email(user, order, token):
     orders = Order.query.get_or_404(order.order_id)
     sender_email = 'vishnujavvaji19@gmail.com'
     sender_password = 'aiun nsnp auvd nrbt'
-    receiver_email = user.email
+    receiver_email = orders.mail
     subject = 'Rate the Product'
-    body = f"Hello {orders.customer_name}, \n\nYour order : {product.product_name} with ID {order.id} has been successfully delivered. Thank you for choosing us!\n\nTo rate the delivered products click : {rating_url}\n\nBest regards,\nYour Delivery Team\n\n"
+    body = f"Hello {orders.customer_name}, \n\nYour order : {product.product_name} with ID {orders.id} has been successfully delivered. Thank you for choosing us!\n\nTo rate the delivered products click : {rating_url}\n\nBest regards,\nYour Delivery Team\n\n"
     message = MIMEMultipart()
     message["From"] = sender_email
     message["To"] = receiver_email
@@ -69,7 +69,7 @@ def customer_review(user_id, order_id, token):
     order_items = OrderItem.query.filter_by(order_id=order.id).all()
     if not order_items:
         flash("No items found in this order.", "danger")
-        return redirect(url_for('delivery.some_other_route'))  # Adjust redirect as needed
+        return redirect(url_for('views.homepage'))  # Adjust redirect as needed
 
     # Extract products from order items
     products = [item.product for item in order_items]
@@ -162,9 +162,12 @@ def update_status(order_id, status):
             order.status = status
             if status == "Delivered":
                 order.delivery_date = datetime.now()
-                user = User.query.filter_by(email=order.mail).first()
-                token = user.generate_reset_token(current_app.config['SECRET_KEY'])
-                send_email(user, order_item, token)
+                user = User.query.get_or_404(order.user_id)
+                if user :
+                    token = user.generate_reset_token(current_app.config['SECRET_KEY'])
+                    send_email(user, order_item, token)
+                else :
+                    flash("no user exists!!!","danger")
             db.session.commit()
             return redirect(f'/delivery/dashboard')
         except Exception as e:
